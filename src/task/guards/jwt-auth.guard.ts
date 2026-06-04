@@ -5,13 +5,12 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Observable } from 'rxjs';
-import { jwtConstants } from 'src/auth/constants';
+
 import * as jwt from 'jsonwebtoken';
+import { jwtConstants } from '../../auth/constants';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
-
-  
   private GetUser(token) {
     try {
       const decoded = jwt.verify(token, jwtConstants.secret);
@@ -23,10 +22,10 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     }
   }
 
-  private SetUser(user, request , context) {
-      console.log('curr id ',user.id);
+  private SetUser(user, request, context) {
+    console.log('curr id ', user.id);
     request.user = user;
-    console.log('user set' , context.switchToHttp().getRequest());
+    console.log('user set', context.switchToHttp().getRequest());
   }
 
   canActivate(
@@ -38,10 +37,9 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
     if (this.GetUser(token)) {
       const user = this.GetUser(token);
-      this.SetUser(user, request , context);
+      this.SetUser(user, request, context);
       return true;
     }
     return false;
   }
-
 }

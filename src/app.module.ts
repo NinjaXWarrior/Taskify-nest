@@ -6,7 +6,6 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { DatabaseModule } from './database/database.module';
 
-
 @Module({
   imports: [TaskModule, AuthModule, UsersModule, DatabaseModule],
   controllers: [AppController],

@@ -1,21 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { user } from './interface/user.interface';
 import { Model } from 'mongoose';
-import { User } from './dtos/user.dto'
+import { User } from './dtos/user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { UserSchemaName } from './schemas/user.schema';
 
 @Injectable()
 export class UsersService {
-
-
-  constructor(@InjectModel(UserSchemaName) private readonly usersModel: Model<user>){}
+  constructor(
+    @InjectModel(UserSchemaName) private readonly usersModel: Model<user>,
+  ) {}
 
   // private users: User[] = [];
 
   findOne(user: User) {
     // return this.users.find((users) => users.email === user.email);
-    return this.usersModel.findById(user.id)
+    return this.usersModel.findById(user.id);
   }
 
   addUser(user: User) {
