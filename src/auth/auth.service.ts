@@ -3,6 +3,8 @@ import { User } from '../users/dtos/user.dto';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { v4 as uuidv4 } from 'uuid';
+import { RegisterDto } from '../users/dtos/register.dtos';
+import { LoginDto } from '../users/dtos/login.dtos';
 
 @Injectable()
 export class AuthService {
@@ -11,21 +13,27 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async createUser(user: User): Promise<string> {
-    console.log(this.usersService.findOne(user));
-    if (this.usersService.findOne(user)) {
-      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
-    } else {
-      user.id = uuidv4();
-      this.usersService.addUser(user);
-      return 'created User successfully';
+  async createUser(dto: RegisterDto): Promise<string> {
+    const existingUser = await this.usersService.findByEmail(dto.email);
+
+    if (existingUser) {
+      throw new HttpException('User already exists', HttpStatus.FORBIDDEN);
     }
+
+    const newUser = {
+      ...dto,
+      id: uuidv4(),
+    };
+
+    this.usersService.addUser(newUser);
+
+    return 'created User successfully';
   }
 
-  async login(user: User): Promise<{ accessToken: string }> {
-    const result = await this.usersService.findOne(user);
+  async login(dto: LoginDto): Promise<{ accessToken: string }> {
+    const result = await this.usersService.findByEmail(dto.email);
 
-    if (result && result.password === user.password) {
+    if (result && result.password === dto.password) {
       const payload = {
         username: result.userName,
         id: result.id,
@@ -37,6 +45,6 @@ export class AuthService {
       };
     }
 
-    throw new HttpException('User no found', HttpStatus.NOT_FOUND);
+    throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
   }
 }

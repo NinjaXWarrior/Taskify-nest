@@ -2,10 +2,10 @@ import { Document } from 'mongoose';
 
 export interface user extends Document {
   readonly email: string;
-  password: String;
-  userName: String;
+  password: string;
+  userName: string;
   role: Roles;
-  id: String;
+  id: string;
 }
 
 export enum Roles {
