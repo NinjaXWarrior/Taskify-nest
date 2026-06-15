@@ -6,6 +6,7 @@ import {
   ApiOperation,
   ApiCreatedResponse,
   ApiForbiddenResponse,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
@@ -48,9 +49,41 @@ export class AuthController {
     return this.authService.createUser(dto);
   }
 
+  //   @Post('login')
+  //   @ApiOperation({ summary: 'Login user' })
+  //   @ApiBody({ type: LoginDto })
+  //   login(@Body() dto: LoginDto) {
+  //     return this.authService.login(dto);
+  //   }
+  // }
+
   @Post('login')
   @ApiOperation({ summary: 'Login user' })
   @ApiBody({ type: LoginDto })
+  @ApiCreatedResponse({
+    description: 'Login successful',
+    schema: {
+      example: {
+        accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        user: {
+          _id: '684efb1f4db4d8f5e98b1234',
+          email: 'shiva@gmail.com',
+          userName: 'shiva',
+          role: 'USER',
+        },
+      },
+    },
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Invalid credentials',
+    schema: {
+      example: {
+        statusCode: 401,
+        message: 'Invalid credentials',
+        error: 'Unauthorized',
+      },
+    },
+  })
   login(@Body() dto: LoginDto) {
     return this.authService.login(dto);
   }
