@@ -12,24 +12,51 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async createUser(dto: RegisterDto): Promise<string> {
+  // async createUser(dto: RegisterDto): Promise<string> {
+  //   const existingUser = await this.usersService.findByEmail(dto.email);
+
+  //   if (existingUser) {
+  //     throw new HttpException('User already exists', HttpStatus.FORBIDDEN);
+  //   }
+
+  //   const newUser = {
+  //     ...dto,
+  //     // id: uuidv4(),
+  //   };
+
+  //   await this.usersService.addUser(newUser);
+
+  //   return 'created User successfully';
+  // }
+
+  async createUser(dto: RegisterDto) {
     const existingUser = await this.usersService.findByEmail(dto.email);
 
     if (existingUser) {
       throw new HttpException('User already exists', HttpStatus.FORBIDDEN);
     }
 
-    const newUser = {
-      ...dto,
-      // id: uuidv4(),
+    const user = await this.usersService.addUser(dto);
+
+    return {
+      message: 'created User successfully',
+      timestamp: new Date().toISOString(),
+      user: {
+        _id: user._id,
+        email: user.email,
+        userName: user.userName,
+        role: user.role,
+      },
     };
-
-    await this.usersService.addUser(newUser);
-
-    return 'created User successfully';
   }
 
-  async login(dto: LoginDto): Promise<{ accessToken: string }> {
+  // async login(dto: LoginDto): Promise<{ accessToken: string }> {
+  async login(dto: LoginDto): Promise<{
+    message: string;
+    accessToken: string;
+    user: any;
+    timestamp: string;
+  }> {
     const result = await this.usersService.findByEmail(dto.email);
 
     if (result && result.password === dto.password) {
@@ -40,7 +67,15 @@ export class AuthService {
         iss: 'Shiva',
       };
       return {
+        message: 'Login successful',
         accessToken: this.jwtService.sign(payload),
+        timestamp: new Date().toISOString(),
+        user: {
+          _id: result._id,
+          email: result.email,
+          userName: result.userName,
+          role: result.role,
+        },
       };
     }
 
