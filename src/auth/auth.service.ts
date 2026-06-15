@@ -1,8 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { User } from '../users/dtos/user.dto';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
-import { v4 as uuidv4 } from 'uuid';
+// import { v4 as uuidv4 } from 'uuid';
 import { RegisterDto } from '../users/dtos/register.dtos';
 import { LoginDto } from '../users/dtos/login.dtos';
 
@@ -22,10 +21,10 @@ export class AuthService {
 
     const newUser = {
       ...dto,
-      id: uuidv4(),
+      // id: uuidv4(),
     };
 
-    this.usersService.addUser(newUser);
+    await this.usersService.addUser(newUser);
 
     return 'created User successfully';
   }
@@ -36,9 +35,9 @@ export class AuthService {
     if (result && result.password === dto.password) {
       const payload = {
         username: result.userName,
-        id: result.id,
+        id: result._id,
         roles: result.role,
-        iss: 'Hitesh',
+        iss: 'Shiva',
       };
       return {
         accessToken: this.jwtService.sign(payload),

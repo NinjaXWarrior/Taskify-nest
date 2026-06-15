@@ -1,20 +1,3 @@
-// import * as mongoose from 'mongoose';
-
-// export enum Roles {
-//   ADMIN,
-//   USER,
-// }
-
-// export const UserSchema = new mongoose.Schema({
-//   // id: String,
-//   email: String,
-//   password: String,
-//   userName: String,
-//   role: Roles,
-// });
-
-// export const UserSchemaName = 'User';
-
 import * as mongoose from 'mongoose';
 
 export enum Roles {
