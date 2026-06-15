@@ -1,15 +1,3 @@
-// import { ValidationPipe } from '@nestjs/common';
-// import { NestFactory } from '@nestjs/core';
-// import { useContainer } from 'class-validator';
-// import { AppModule } from './app.module';
-
-// async function bootstrap() {
-//   const app = await NestFactory.create(AppModule);
-//   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
-//   await app.listen(3000);
-// }
-// bootstrap();
-
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
@@ -35,8 +23,20 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
 
-  SwaggerModule.setup('api', app, document);
+  // SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api', app, document, {
+    explorer: true,
+    swaggerOptions: {
+      persistAuthorization: true,
+      tryItOutEnabled: true,
+      // docExpansion: 'full',
+    },
+  });
 
   await app.listen(3000);
 }
 bootstrap();
+
+// get refresh tokens
+// change password
+// logout
