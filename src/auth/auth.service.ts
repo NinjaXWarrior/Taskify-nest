@@ -12,23 +12,6 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  // async createUser(dto: RegisterDto): Promise<string> {
-  //   const existingUser = await this.usersService.findByEmail(dto.email);
-
-  //   if (existingUser) {
-  //     throw new HttpException('User already exists', HttpStatus.FORBIDDEN);
-  //   }
-
-  //   const newUser = {
-  //     ...dto,
-  //     // id: uuidv4(),
-  //   };
-
-  //   await this.usersService.addUser(newUser);
-
-  //   return 'created User successfully';
-  // }
-
   async createUser(dto: RegisterDto) {
     const existingUser = await this.usersService.findByEmail(dto.email);
 
