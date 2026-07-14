@@ -1,17 +1,27 @@
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
 
 import { TaskController } from './task.controller';
 import { TaskService } from './task.service';
-import { MongooseModule } from '@nestjs/mongoose';
+
+import { TaskSchema, TaskSchemaName } from './schema/task.schema';
 import { AuthModule } from '../auth/auth.module';
-// import { TaskSchema, TaskSchemaName } from './schema/task.schema';
+import { TaskAccessGuard } from './guards/task-access.guard';
+import { TaskRepository } from './repositories/task.repository';
 
 @Module({
-  controllers: [TaskController],
-  providers: [TaskService],
   imports: [
-    // MongooseModule.forFeature([{ name: TaskSchemaName, schema: TaskSchema }]),
+    MongooseModule.forFeature([
+      {
+        name: TaskSchemaName,
+        schema: TaskSchema,
+      },
+    ]),
     AuthModule,
   ],
+
+  controllers: [TaskController],
+
+  providers: [TaskService, TaskAccessGuard, TaskRepository],
 })
 export class TaskModule {}

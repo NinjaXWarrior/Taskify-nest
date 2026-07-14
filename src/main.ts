@@ -2,6 +2,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { env } from './common/config/env.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -13,30 +14,45 @@ async function bootstrap() {
     }),
   );
 
-  // Swagger Configuration
   const config = new DocumentBuilder()
-    .setTitle('Task Management API')
-    .setDescription('API documentation for Task Management System')
-    .setVersion('1.0')
-    .addBearerAuth()
+    .setTitle('Taskify API')
+    .setDescription(
+      'A polished task management API with authentication, task ownership, and rich Swagger documentation.',
+    )
+    .setVersion('1.0.0')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'Authorization',
+        in: 'header',
+      },
+      'JWT-auth',
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
 
-  // SwaggerModule.setup('api', app, document);
   SwaggerModule.setup('api', app, document, {
+    customSiteTitle: 'Taskify API Docs',
     explorer: true,
     swaggerOptions: {
       persistAuthorization: true,
       tryItOutEnabled: true,
-      // docExpansion: 'full',
+      docExpansion: 'list',
+      tagsSorter: 'alpha',
+      operationsSorter: 'method',
     },
   });
 
-  await app.listen(3000);
+  await app.listen(env.port);
 }
 bootstrap();
 
 // get refresh tokens
 // change password
 // logout
+
+// .env
+// config

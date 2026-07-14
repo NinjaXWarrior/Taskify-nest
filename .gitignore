@@ -11,6 +11,9 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
+README-architecture.md
+ARCHITECTURE.md
+
 # OS
 .DS_Store
 

@@ -4,16 +4,17 @@ import { jwtConstants } from '../../auth/constants';
 
 const User = createParamDecorator((data: any, context: ExecutionContext) => {
   const request: any = context.switchToHttp().getRequest();
+  const authHeader = request.headers.authorization;
 
-  const token: string = request.headers.authorization.split(' ')[1];
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return null;
+  }
+
+  const token: string = authHeader.split(' ')[1];
 
   try {
-    const decoded = jwt.verify(token, jwtConstants.secret);
-    console.log('decoded', decoded);
-    return decoded;
+    return jwt.verify(token, jwtConstants.secret);
   } catch (err) {
-    // err
-    console.log(err);
     return null;
   }
 });
