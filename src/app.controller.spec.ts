@@ -15,8 +15,15 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
+    it('should return a polished API welcome payload', () => {
+      const result = appController.getHello();
+
+      expect(result).toMatchObject({
+        status: 'success',
+        message: 'Taskify API is running',
+      });
+      expect(result.endpoints).toBeDefined();
+      expect(result.docs).toBe('/api');
     });
   });
 });
