@@ -84,6 +84,3 @@ Swagger is available at:
 http://localhost:3000/api
 ```
 
-## Additional docs
-- Full architecture guide: [ARCHITECTURE.md](ARCHITECTURE.md)
-- Guard/decorator guide: [README-architecture.md](README-architecture.md)
