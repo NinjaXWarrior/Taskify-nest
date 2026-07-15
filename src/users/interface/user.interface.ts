@@ -12,3 +12,8 @@ export enum Roles {
   ADMIN,
   USER,
 }
+
+//controllers\\dto//repository/service/appModule
+//decorators// common
+//middleware
+//projects
