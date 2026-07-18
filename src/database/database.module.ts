@@ -4,7 +4,7 @@ import { DatabaseController } from './database.controller';
 import { DatabaseService } from './database.service';
 
 @Module({
-  imports: [MongooseModule.forRoot('mongodb://localhost:27017/Taskify')],
+  imports: [MongooseModule.forRoot(process.env.MONGO_URI)],
   controllers: [DatabaseController],
   providers: [DatabaseService],
 })
