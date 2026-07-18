@@ -5,12 +5,7 @@ import { DatabaseService } from './database.service';
 
 console.log('MONGO_URI:', process.env.MONGO_URI);
 @Module({
-  // imports: [MongooseModule.forRoot(process.env.MONGO_URI)],
-  imports: [
-    MongooseModule.forRoot(process.env.MONGO_URI!, {
-      serverSelectionTimeoutMS: 5000,
-    }),
-  ],
+  imports: [MongooseModule.forRoot(process.env.MONGO_URI)],
   controllers: [DatabaseController],
   providers: [DatabaseService],
 })
