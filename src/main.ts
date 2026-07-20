@@ -1,4 +1,4 @@
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
@@ -6,18 +6,22 @@ import { env } from './common/config/env.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const logger = new Logger('Bootstrap');
 
+  // Global validation pipe
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
       transform: true,
+      forbidNonWhitelisted: true,
     }),
   );
 
+  // Swagger/OpenAPI configuration
   const config = new DocumentBuilder()
     .setTitle('Taskify API')
     .setDescription(
-      'A polished task management API with authentication, task ownership, and rich Swagger documentation.',
+      'A polished task management API with authentication, task ownership, and comprehensive health monitoring.',
     )
     .setVersion('1.0.0')
     .addBearerAuth(
@@ -30,6 +34,12 @@ async function bootstrap() {
       },
       'JWT-auth',
     )
+    .addTag('Health', 'Health check and monitoring endpoints')
+    .addTag('Auth', 'Authentication endpoints')
+    .addTag('Tasks', 'Task management endpoints')
+    .addTag('Users', 'User management endpoints')
+    .addTag('Database', 'Database management endpoints')
+    .addTag('Root', 'API root endpoint')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
@@ -43,10 +53,16 @@ async function bootstrap() {
       docExpansion: 'list',
       tagsSorter: 'alpha',
       operationsSorter: 'method',
+      defaultModelsExpandDepth: 1,
     },
   });
 
   await app.listen(env.port);
+  logger.log(`✓ Application is running on http://localhost:${env.port}`);
+  logger.log(
+    `✓ Swagger documentation available at http://localhost:${env.port}/api`,
+  );
+  logger.log(`✓ Health check available at http://localhost:${env.port}/health`);
 }
 bootstrap();
 

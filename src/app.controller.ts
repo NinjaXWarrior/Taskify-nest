@@ -10,7 +10,8 @@ export class AppController {
   @Get()
   @ApiOperation({
     summary: 'API home endpoint',
-    description: 'Returns a welcome payload with the basic routes and Swagger docs location.',
+    description:
+      'Returns a welcome payload with the basic routes and Swagger docs location.',
   })
   @ApiResponse({
     status: 200,
