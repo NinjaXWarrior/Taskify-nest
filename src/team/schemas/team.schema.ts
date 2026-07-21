@@ -12,7 +12,11 @@ export const TeamSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
     description: { type: String, default: '' },
-    leader: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    leader: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
     members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     status: {
       type: String,
@@ -21,7 +25,11 @@ export const TeamSchema = new mongoose.Schema(
     },
     isDeleted: { type: Boolean, default: false },
     isArchived: { type: Boolean, default: false },
-    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
   },
   { timestamps: true },
 );

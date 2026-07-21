@@ -42,7 +42,8 @@ export class UsersController {
     const parsed = {
       search,
       role,
-      isActive: isActive === 'true' ? true : isActive === 'false' ? false : undefined,
+      isActive:
+        isActive === 'true' ? true : isActive === 'false' ? false : undefined,
       page: Number(page),
       limit: Number(limit),
     };
@@ -54,7 +55,9 @@ export class UsersController {
   @Get('me')
   @ApiOperation({ summary: 'Get current authenticated user profile' })
   async me(@Request() req) {
-    const user = await this.usersService.findById(req.user.id || req.user.userId);
+    const user = await this.usersService.findById(
+      req.user.id || req.user.userId,
+    );
     return user;
   }
 
@@ -97,7 +100,8 @@ export class UsersController {
       storage: diskStorage({
         destination: './uploads/avatars',
         filename: (req, file, cb) => {
-          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+          const uniqueSuffix =
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
           const fileExtName = extname(file.originalname);
           cb(null, `${uniqueSuffix}${fileExtName}`);
         },
@@ -107,7 +111,10 @@ export class UsersController {
       },
     }),
   )
-  async uploadAvatar(@Param('id') id: string, @UploadedFile() file: Express.Multer.File) {
+  async uploadAvatar(
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
     if (!file) {
       return { message: 'No file uploaded' };
     }
@@ -133,7 +140,10 @@ export class UsersController {
   @Patch(':id/delete')
   @ApiOperation({ summary: 'Soft-delete a user (admin)' })
   delete(@Param('id') id: string) {
-    return this.usersService.updateUser(id, { isDeleted: true, isActive: false });
+    return this.usersService.updateUser(id, {
+      isDeleted: true,
+      isActive: false,
+    });
   }
 
   @Get(':id/avatar')

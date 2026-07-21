@@ -6,6 +6,11 @@ import { TaskModule } from './task/task.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ProjectModule } from './project/project.module';
+import { TeamModule } from './team/team.module';
+import { CommentsModule } from './comments/comments.module';
+import { AttachmentsModule } from './attachments/attachments.module';
+import { NotificationsModule } from './notifications/notifications.module';
+import { ActivityModule } from './activity/activity.module';
 import { DatabaseModule } from './database/database.module';
 import { HealthModule } from './health/health.module';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
@@ -19,6 +24,11 @@ import { PermissionsGuard } from './common/guards/permissions.guard';
     AuthModule,
     UsersModule,
     ProjectModule,
+    TeamModule,
+    CommentsModule,
+    AttachmentsModule,
+    NotificationsModule,
+    ActivityModule,
     DatabaseModule,
     HealthModule,
   ],

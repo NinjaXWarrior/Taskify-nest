@@ -31,6 +31,10 @@ export class TeamRepository {
   }
 
   async softDelete(id: string) {
-    return this.teamModel.findByIdAndUpdate(id, { isDeleted: true, isArchived: true }, { new: true });
+    return this.teamModel.findByIdAndUpdate(
+      id,
+      { isDeleted: true, isArchived: true },
+      { new: true },
+    );
   }
 }

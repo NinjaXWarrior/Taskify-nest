@@ -7,8 +7,22 @@ export class PermissionsService {
   // A simple in-memory permissions matrix mapping roles to allowed permissions.
   // In a real app this could come from DB or config.
   private matrix: Record<string, string[]> = {
-    ADMIN: ['project:create', 'project:update', 'project:delete', 'task:create', 'task:update', 'task:delete', 'user:manage'],
-    MANAGER: ['project:create', 'project:update', 'task:create', 'task:update', 'task:delete'],
+    ADMIN: [
+      'project:create',
+      'project:update',
+      'project:delete',
+      'task:create',
+      'task:update',
+      'task:delete',
+      'user:manage',
+    ],
+    MANAGER: [
+      'project:create',
+      'project:update',
+      'task:create',
+      'task:update',
+      'task:delete',
+    ],
     TEAM_LEAD: ['task:create', 'task:update'],
     EMPLOYEE: ['task:update'],
     USER: [],

@@ -1,11 +1,26 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, UseGuards, Request } from '@nestjs/common';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Put,
+  Query,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 import { ProjectService } from './project.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
+import { CreateProjectDto } from './dtos/create-project.dto';
+import { UpdateProjectDto } from './dtos/update-project.dto';
 
 @ApiTags('Projects')
+@ApiBearerAuth('JWT-auth')
 @Controller('projects')
 export class ProjectController {
   constructor(private readonly svc: ProjectService) {}
@@ -14,7 +29,8 @@ export class ProjectController {
   @Roles('ADMIN', 'MANAGER', 'TEAM_LEAD')
   @Post()
   @ApiOperation({ summary: 'Create project' })
-  create(@Body() dto: any, @Request() req: any) {
+  @ApiBody({ type: CreateProjectDto })
+  create(@Body() dto: CreateProjectDto, @Request() req: any) {
     return this.svc.create(dto, req.user);
   }
 
@@ -34,7 +50,8 @@ export class ProjectController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN', 'MANAGER')
   @Put(':id')
-  update(@Param('id') id: string, @Body() dto: any) {
+  @ApiBody({ type: UpdateProjectDto })
+  update(@Param('id') id: string, @Body() dto: UpdateProjectDto) {
     return this.svc.update(id, dto);
   }
 

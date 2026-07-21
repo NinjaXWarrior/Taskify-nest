@@ -11,6 +11,20 @@ export class TaskRepository extends BaseRepository<TaskDocument> {
   }
 
   async findByOwner(ownerId: string) {
-    return this.model.find({ createdBy: ownerId }).sort({ createdAt: -1 });
+    return this.model
+      .find({ createdBy: ownerId, isDeleted: false })
+      .sort({ createdAt: -1 });
+  }
+
+  async find(filter: any, options: { skip?: number; limit?: number } = {}) {
+    return this.model
+      .find({ ...filter, isDeleted: false })
+      .sort({ createdAt: -1 })
+      .skip(options.skip || 0)
+      .limit(options.limit || 10);
+  }
+
+  async count(filter: any) {
+    return this.model.countDocuments({ ...filter, isDeleted: false });
   }
 }
