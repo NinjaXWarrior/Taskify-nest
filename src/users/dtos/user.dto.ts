@@ -3,6 +3,9 @@ import { IsString, IsNotEmpty } from 'class-validator';
 
 export enum Roles {
   ADMIN = 'ADMIN',
+  MANAGER = 'MANAGER',
+  TEAM_LEAD = 'TEAM_LEAD',
+  EMPLOYEE = 'EMPLOYEE',
   USER = 'USER',
 }
 
@@ -25,6 +28,12 @@ export class User {
   @ApiProperty({ enum: Roles, example: Roles.USER, description: 'Role assigned to the user.' })
   @IsNotEmpty()
   readonly role: Roles;
+
+  @ApiProperty({ required: false })
+  readonly avatar?: string;
+
+  @ApiProperty({ required: false })
+  readonly isActive?: boolean;
 
   @ApiProperty({ example: '688b2b7da6f3f4dd7d2e2a9b', description: 'Unique identifier for the user.' })
   @IsString()

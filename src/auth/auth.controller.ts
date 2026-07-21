@@ -7,11 +7,19 @@ import {
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiUnauthorizedResponse,
+  ApiOkResponse,
 } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
 import { RegisterDto } from '../users/dtos/register.dtos';
 import { LoginDto } from '../users/dtos/login.dtos';
+
+import { ForgotPasswordDto } from '../users/dtos/forgot-password.dto';
+import { ResetPasswordDto } from '../users/dtos/reset-password.dto';
+import { ChangePasswordDto } from '../users/dtos/change-password.dto';
+import { UseGuards, Request, Delete } from '@nestjs/common';
+import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
+import { RefreshTokenDto } from '../users/dtos/refresh-token.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -86,5 +94,62 @@ export class AuthController {
   })
   login(@Body() dto: LoginDto) {
     return this.authService.login(dto);
+  }
+
+  @Post('refresh')
+  @ApiOperation({ summary: 'Refresh access token' })
+  refresh(@Body() dto: RefreshTokenDto) {
+    return this.authService.refresh(dto);
+  }
+
+  @Post('logout')
+  @ApiOperation({ summary: 'Logout user (invalidate refresh token)' })
+  logout(@Body() dto: RefreshTokenDto) {
+    return this.authService.logout(dto);
+  }
+
+  @Post('forgot-password')
+  @ApiOperation({ summary: 'Request password reset link' })
+  forgot(@Body() dto: ForgotPasswordDto) {
+    return this.authService.forgotPassword(dto);
+  }
+
+  @Post('reset-password')
+  @ApiOperation({ summary: 'Reset password using token' })
+  reset(@Body() dto: ResetPasswordDto) {
+    return this.authService.resetPassword(dto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('change-password')
+  @ApiOperation({ summary: 'Change password (authenticated)' })
+  change(@Request() req, @Body() dto: ChangePasswordDto) {
+    return this.authService.changePassword(req.user, dto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete('account')
+  @ApiOperation({ summary: 'Delete current authenticated account' })
+  @ApiOkResponse({
+    description: 'Account deleted successfully',
+    schema: {
+      example: {
+        message: 'Account deleted successfully',
+        timestamp: '2026-07-21T12:34:56.789Z',
+      },
+    },
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized',
+    schema: {
+      example: {
+        statusCode: 401,
+        message: 'Unauthorized',
+        error: 'Unauthorized',
+      },
+    },
+  })
+  deleteAccount(@Request() req) {
+    return this.authService.deleteAccount(req.user);
   }
 }
