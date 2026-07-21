@@ -1,29 +1,36 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsDateString, IsOptional, IsString } from 'class-validator';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  IsArray,
+  IsDateString,
+  IsEnum,
+  IsOptional,
+  IsString,
+} from 'class-validator';
+import { ProjectStatus } from '../schemas/project.schema';
 
 export class UpdateProjectDto {
-  @ApiProperty({ required: false })
+  @ApiPropertyOptional()
   @IsOptional()
   @IsString()
   title?: string;
 
-  @ApiProperty({ required: false })
+  @ApiPropertyOptional()
   @IsOptional()
   @IsString()
   description?: string;
 
-  @ApiProperty({ required: false })
+  @ApiPropertyOptional()
   @IsOptional()
   @IsDateString()
   deadline?: string;
 
-  @ApiProperty({ required: false })
+  @ApiPropertyOptional({ type: [String] })
   @IsOptional()
   @IsArray()
   members?: string[];
 
-  @ApiProperty({ required: false })
+  @ApiPropertyOptional({ enum: ProjectStatus })
+  @IsEnum(ProjectStatus)
   @IsOptional()
-  @IsString()
-  status?: string;
+  status?: ProjectStatus;
 }

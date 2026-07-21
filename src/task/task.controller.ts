@@ -4,9 +4,11 @@ import {
   Post,
   Put,
   Delete,
+  Patch,
   Body,
   Param,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -41,31 +43,8 @@ export class TaskController {
     description: 'Creates a task for the currently authenticated user.',
   })
   @ApiBody({ type: CreateTaskDto })
-  @ApiCreatedResponse({
-    description: 'Task created successfully',
-    schema: {
-      example: {
-        message: 'Task created successfully',
-        timestamp: '2026-07-15T00:00:00.000Z',
-        task: {
-          _id: '688b2b7da6f3f4dd7d2e2a9b',
-          title: 'Learn NestJS',
-          description: 'Complete CRUD API with MongoDB',
-          createdBy: '684efb1f4db4d8f5e98b1234',
-          createdOn: '2026-07-15T00:00:00.000Z',
-        },
-      },
-    },
-  })
-  @ApiUnauthorizedResponse({
-    description: 'Missing or invalid bearer token',
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'Unauthorized',
-      },
-    },
-  })
+  @ApiCreatedResponse({ description: 'Task created successfully' })
+  @ApiUnauthorizedResponse({ description: 'Missing or invalid bearer token' })
   @ApiBadRequestResponse({
     description: 'Validation error for the request body',
   })
@@ -75,32 +54,13 @@ export class TaskController {
 
   @Get()
   @ApiOperation({
-    summary: 'Get all tasks',
-    description: 'Returns all tasks owned by the authenticated user.',
+    summary: 'Get tasks for current user',
+    description: 'Returns tasks where the user is creator or assignee.',
   })
-  @ApiOkResponse({
-    description: 'Tasks fetched successfully',
-    schema: {
-      example: {
-        message: 'Tasks fetched successfully',
-        timestamp: '2026-07-15T00:00:00.000Z',
-        tasks: [
-          {
-            _id: '688b2b7da6f3f4dd7d2e2a9b',
-            title: 'Learn NestJS',
-            description: 'Complete CRUD API with MongoDB',
-            createdBy: '684efb1f4db4d8f5e98b1234',
-            createdOn: '2026-07-15T00:00:00.000Z',
-          },
-        ],
-      },
-    },
-  })
-  @ApiUnauthorizedResponse({
-    description: 'Missing or invalid bearer token',
-  })
-  listTasks(@GetUser() user: User) {
-    return this.taskService.listTasks(user);
+  @ApiOkResponse({ description: 'Tasks fetched successfully' })
+  @ApiUnauthorizedResponse({ description: 'Missing or invalid bearer token' })
+  listTasks(@Query() query: any, @GetUser() user: User) {
+    return this.taskService.listTasks(user, query);
   }
 
   @Get(':id')
@@ -114,36 +74,12 @@ export class TaskController {
     description: 'Task ID',
     example: '688b2b7da6f3f4dd7d2e2a9b',
   })
-  @ApiOkResponse({
-    description: 'Task fetched successfully',
-    schema: {
-      example: {
-        message: 'Task fetched successfully',
-        timestamp: '2026-07-15T00:00:00.000Z',
-        task: {
-          _id: '688b2b7da6f3f4dd7d2e2a9b',
-          title: 'Learn NestJS',
-          description: 'Complete CRUD API with MongoDB',
-          createdBy: '684efb1f4db4d8f5e98b1234',
-          createdOn: '2026-07-15T00:00:00.000Z',
-        },
-      },
-    },
-  })
+  @ApiOkResponse({ description: 'Task fetched successfully' })
   @ApiNotFoundResponse({ description: 'Task not found' })
   @ApiForbiddenResponse({
     description: 'The task does not belong to this user',
-    schema: {
-      example: {
-        statusCode: 403,
-        message: 'Access denied',
-        error: 'Forbidden',
-      },
-    },
   })
-  @ApiUnauthorizedResponse({
-    description: 'Missing or invalid bearer token',
-  })
+  @ApiUnauthorizedResponse({ description: 'Missing or invalid bearer token' })
   listTaskById(@Param('id') id: string, @GetUser() user: User) {
     return this.taskService.listTaskById(id, user);
   }
@@ -151,44 +87,36 @@ export class TaskController {
   @Delete(':id')
   @ApiOperation({
     summary: 'Delete a task',
-    description: 'Deletes a task only if it belongs to the authenticated user.',
+    description: 'Soft deletes a task if the user has access.',
   })
   @ApiParam({
     name: 'id',
     description: 'Task ID',
     example: '688b2b7da6f3f4dd7d2e2a9b',
   })
-  @ApiOkResponse({
-    description: 'Task deleted successfully',
-    schema: {
-      example: {
-        message: 'Task deleted successfully',
-        timestamp: '2026-07-15T00:00:00.000Z',
-      },
-    },
-  })
+  @ApiOkResponse({ description: 'Task deleted successfully' })
   @ApiNotFoundResponse({ description: 'Task not found' })
   @ApiForbiddenResponse({
     description: 'The task does not belong to this user',
-    schema: {
-      example: {
-        statusCode: 403,
-        message: 'Access denied',
-        error: 'Forbidden',
-      },
-    },
   })
-  @ApiUnauthorizedResponse({
-    description: 'Missing or invalid bearer token',
-  })
+  @ApiUnauthorizedResponse({ description: 'Missing or invalid bearer token' })
   deleteTask(@Param('id') id: string, @GetUser() user: User) {
     return this.taskService.deleteTask(id, user);
+  }
+
+  @Patch(':id/archive')
+  @ApiOperation({ summary: 'Archive a task' })
+  @ApiParam({ name: 'id', description: 'Task ID' })
+  @ApiOkResponse({ description: 'Task archived successfully' })
+  @ApiUnauthorizedResponse({ description: 'Missing or invalid bearer token' })
+  archiveTask(@Param('id') id: string, @GetUser() user: User) {
+    return this.taskService.archiveTask(id, user);
   }
 
   @Put(':id')
   @ApiOperation({
     summary: 'Update a task',
-    description: 'Updates a task only if it belongs to the authenticated user.',
+    description: 'Updates a task if it belongs to the authenticated user.',
   })
   @ApiParam({
     name: 'id',
@@ -196,41 +124,36 @@ export class TaskController {
     example: '688b2b7da6f3f4dd7d2e2a9b',
   })
   @ApiBody({ type: UpdateTaskDto })
-  @ApiOkResponse({
-    description: 'Task updated successfully',
-    schema: {
-      example: {
-        message: 'Task updated successfully',
-        timestamp: '2026-07-15T00:00:00.000Z',
-        task: {
-          _id: '688b2b7da6f3f4dd7d2e2a9b',
-          title: 'Learn NestJS',
-          description: 'Complete CRUD API with MongoDB',
-          createdBy: '684efb1f4db4d8f5e98b1234',
-          createdOn: '2026-07-15T00:00:00.000Z',
-        },
-      },
-    },
-  })
+  @ApiOkResponse({ description: 'Task updated successfully' })
   @ApiNotFoundResponse({ description: 'Task not found' })
   @ApiForbiddenResponse({
     description: 'The task does not belong to this user',
-    schema: {
-      example: {
-        statusCode: 403,
-        message: 'Access denied',
-        error: 'Forbidden',
-      },
-    },
   })
-  @ApiUnauthorizedResponse({
-    description: 'Missing or invalid bearer token',
-  })
+  @ApiUnauthorizedResponse({ description: 'Missing or invalid bearer token' })
   updateTask(
     @Param('id') id: string,
     @Body() dto: UpdateTaskDto,
     @GetUser() user: User,
   ) {
     return this.taskService.updateTask(id, dto, user);
+  }
+
+  @Patch(':id/assign')
+  @ApiOperation({ summary: 'Assign or reassign task' })
+  @ApiBody({ schema: { example: { assigneeId: '684efb1f4db4d8f5e98b1234' } } })
+  @ApiOkResponse({ description: 'Task assigned successfully' })
+  assignTask(
+    @Param('id') id: string,
+    @Body() body: { assigneeId: string },
+    @GetUser() user: User,
+  ) {
+    return this.taskService.assignTask(id, body.assigneeId, user);
+  }
+
+  @Patch(':id/unassign')
+  @ApiOperation({ summary: 'Remove task assignment' })
+  @ApiOkResponse({ description: 'Task assignment removed successfully' })
+  removeAssignment(@Param('id') id: string, @GetUser() user: User) {
+    return this.taskService.removeAssignment(id, user);
   }
 }

@@ -13,6 +13,7 @@ export class ProjectService {
       owner: new Types.ObjectId(user.id),
       members: (dto.members || []).map((m) => new Types.ObjectId(m)),
       deadline: dto.deadline ? new Date(dto.deadline) : null,
+      status: dto.status || 'ACTIVE',
       createdBy: new Types.ObjectId(user.id),
     };
 
@@ -29,10 +30,30 @@ export class ProjectService {
     const filter: any = {};
 
     if (query.search) {
-      filter.$or = [{ title: { $regex: query.search, $options: 'i' } }, { description: { $regex: query.search, $options: 'i' } }];
+      filter.$and = [
+        {
+          $or: [
+            { title: { $regex: query.search, $options: 'i' } },
+            { description: { $regex: query.search, $options: 'i' } },
+          ],
+        },
+      ];
     }
 
     if (query.owner) filter.owner = query.owner;
+    if (query.status) filter.status = query.status;
+    if (query.member) filter.members = query.member;
+    if (query.deadlineFrom || query.deadlineTo) {
+      filter.deadline = {};
+      if (query.deadlineFrom)
+        filter.deadline.$gte = new Date(query.deadlineFrom);
+      if (query.deadlineTo) filter.deadline.$lte = new Date(query.deadlineTo);
+    }
+
+    if (!['ADMIN', 'MANAGER'].includes(user.roles)) {
+      filter.$and = filter.$and || [];
+      filter.$and.push({ $or: [{ owner: user.id }, { members: user.id }] });
+    }
 
     const items = await this.repo.find(filter, { skip, limit });
     const total = await this.repo.count(filter);
@@ -53,7 +74,10 @@ export class ProjectService {
   }
 
   async archive(id: string) {
-    const project = await this.repo.update(id, { isArchived: true, status: 'ARCHIVED' });
+    const project = await this.repo.update(id, {
+      isArchived: true,
+      status: 'ARCHIVED',
+    });
     if (!project) throw new NotFoundException('Project not found');
     return { message: 'Project archived', project };
   }
@@ -79,7 +103,9 @@ export class ProjectService {
     const project = await this.repo.findById(id);
     if (!project) throw new NotFoundException('Project not found');
 
-    project.members = (project.members || []).filter((m) => m.toString() !== memberId.toString());
+    project.members = (project.members || []).filter(
+      (m) => m.toString() !== memberId.toString(),
+    );
     await project.save();
 
     return { message: 'Member removed', project };

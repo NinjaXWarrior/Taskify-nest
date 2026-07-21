@@ -19,6 +19,7 @@ import { ResetPasswordDto } from '../users/dtos/reset-password.dto';
 import { ChangePasswordDto } from '../users/dtos/change-password.dto';
 import { UseGuards, Request, Delete } from '@nestjs/common';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
+import { Public } from '../common/decorators/public.decorator';
 import { RefreshTokenDto } from '../users/dtos/refresh-token.dto';
 
 @ApiTags('Auth')
@@ -26,6 +27,7 @@ import { RefreshTokenDto } from '../users/dtos/refresh-token.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Public()
   @Post('register')
   @ApiOperation({ summary: 'Register user' })
   @ApiBody({ type: RegisterDto })
@@ -65,6 +67,7 @@ export class AuthController {
   //   }
   // }
 
+  @Public()
   @Post('login')
   @ApiOperation({ summary: 'Login user' })
   @ApiBody({ type: LoginDto })
@@ -96,24 +99,28 @@ export class AuthController {
     return this.authService.login(dto);
   }
 
+  @Public()
   @Post('refresh')
   @ApiOperation({ summary: 'Refresh access token' })
   refresh(@Body() dto: RefreshTokenDto) {
     return this.authService.refresh(dto);
   }
 
+  @Public()
   @Post('logout')
   @ApiOperation({ summary: 'Logout user (invalidate refresh token)' })
   logout(@Body() dto: RefreshTokenDto) {
     return this.authService.logout(dto);
   }
 
+  @Public()
   @Post('forgot-password')
   @ApiOperation({ summary: 'Request password reset link' })
   forgot(@Body() dto: ForgotPasswordDto) {
     return this.authService.forgotPassword(dto);
   }
 
+  @Public()
   @Post('reset-password')
   @ApiOperation({ summary: 'Reset password using token' })
   reset(@Body() dto: ResetPasswordDto) {
