@@ -139,7 +139,8 @@ export class ReadinessProbeDto {
   @ApiProperty({
     type: Boolean,
     example: true,
-    description: 'Indicates if the service is ready to accept traffic from load balancers',
+    description:
+      'Indicates if the service is ready to accept traffic from load balancers',
   })
   ready: boolean;
 }

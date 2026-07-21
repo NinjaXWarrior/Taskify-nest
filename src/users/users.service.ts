@@ -19,10 +19,107 @@ export class UsersService {
   }
 
   async findByEmail(email: string) {
-    return await this.usersModel.findOne({ email });
+    return await this.usersModel.findOne({ email, isDeleted: false });
   }
 
   async findById(id: string) {
-    return await this.usersModel.findById(id);
+    return await this.usersModel.findOne({ _id: id, isDeleted: false });
+  }
+
+  async setRefreshToken(userId: any, token: string) {
+    return await this.usersModel.findByIdAndUpdate(
+      userId,
+      { $addToSet: { refreshTokens: token } },
+      { new: true },
+    );
+  }
+
+  async removeRefreshToken(userId: any, token: string) {
+    return await this.usersModel.findByIdAndUpdate(
+      userId,
+      { $pull: { refreshTokens: token } },
+      { new: true },
+    );
+  }
+
+  async findByRefreshToken(token: string) {
+    return await this.usersModel.findOne({ refreshTokens: token });
+  }
+
+  async setPasswordResetToken(email: string, token: string, expires: Date) {
+    return await this.usersModel.findOneAndUpdate(
+      { email },
+      { passwordResetToken: token, passwordResetExpires: expires },
+      { new: true },
+    );
+  }
+
+  async findByPasswordResetToken(token: string) {
+    return await this.usersModel.findOne({
+      passwordResetToken: token,
+      passwordResetExpires: { $gt: new Date() },
+    });
+  }
+
+  async resetPassword(userId: any, newPassword: string) {
+    return await this.usersModel.findByIdAndUpdate(
+      userId,
+      {
+        password: newPassword,
+        passwordResetToken: null,
+        passwordResetExpires: null,
+      },
+      { new: true },
+    );
+  }
+
+  async updateUser(userId: any, update: Partial<any>) {
+    return await this.usersModel.findByIdAndUpdate(userId, update, {
+      new: true,
+    });
+  }
+
+  async listUsers(query: {
+    search?: string;
+    role?: string;
+    isActive?: boolean;
+    page?: number;
+    limit?: number;
+  }) {
+    const page = query.page && query.page > 0 ? query.page : 1;
+    const limit = query.limit && query.limit > 0 ? query.limit : 10;
+    const skip = (page - 1) * limit;
+
+    const filter: any = { isDeleted: false };
+
+    if (query.search) {
+      filter.$or = [
+        { email: { $regex: query.search, $options: 'i' } },
+        { userName: { $regex: query.search, $options: 'i' } },
+      ];
+    }
+
+    if (query.role) filter.role = query.role;
+    if (typeof query.isActive === 'boolean') filter.isActive = query.isActive;
+
+    const [items, total] = await Promise.all([
+      this.usersModel.find(filter).skip(skip).limit(limit).lean(),
+      this.usersModel.countDocuments(filter),
+    ]);
+
+    return {
+      items,
+      total,
+      page,
+      limit,
+    };
+  }
+
+  async updateAvatar(userId: any, avatarPath: string) {
+    return await this.usersModel.findByIdAndUpdate(
+      userId,
+      { avatar: avatarPath },
+      { new: true },
+    );
   }
 }

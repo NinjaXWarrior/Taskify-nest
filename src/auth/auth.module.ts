@@ -6,6 +6,11 @@ import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
 import { JwtStrategy } from './jwt.strategy';
 import { AuthController } from './auth.controller';
+import { EmailService } from '../common/email/email.service';
+import { RolesGuard } from '../common/guards/roles.guard';
+import { Reflector } from '@nestjs/core';
+import { PermissionsService } from '../common/permissions/permissions.service';
+import { PermissionsGuard } from '../common/guards/permissions.guard';
 
 @Module({
   controllers: [AuthController],
@@ -17,7 +22,7 @@ import { AuthController } from './auth.controller';
       signOptions: { expiresIn: '6000s' },
     }),
   ],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, EmailService],
   exports: [AuthService],
 })
 export class AuthModule {}
