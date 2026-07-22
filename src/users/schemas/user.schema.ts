@@ -32,6 +32,11 @@ export const UserSchema = new mongoose.Schema(
       lowercase: true,
     },
 
+    dob: {
+      type: String,
+      required: true,
+    },
+
     userName: {
       type: String,
       required: true,

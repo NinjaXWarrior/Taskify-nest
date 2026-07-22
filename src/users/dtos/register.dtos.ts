@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  IsDateString,
   IsEmail,
   IsNotEmpty,
   IsString,
@@ -50,6 +51,14 @@ export class RegisterDto {
       'Username can only contain letters, numbers, underscores, and periods.',
   })
   userName: string;
+
+  @ApiProperty({
+    example: '2002-08-15',
+    description: 'Date of birth',
+  })
+  @IsNotEmpty()
+  @IsDateString()
+  dob: string;
 
   @ApiProperty({
     example: 'Password@123',

@@ -80,6 +80,7 @@ export class AuthService {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
+        dob: user.dob,
         userName: user.userName,
         role: user.role,
         isEmailVerified: user.isEmailVerified,

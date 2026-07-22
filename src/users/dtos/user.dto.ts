@@ -41,6 +41,13 @@ export class User {
   readonly userName: string;
 
   @ApiProperty({
+    example: '2002-08-15T00:00:00.000Z',
+    description: 'Date of birth',
+  })
+  @IsString()
+  readonly dob: string;
+
+  @ApiProperty({
     example: '$2b$12$xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
     description: 'Hashed password',
   })

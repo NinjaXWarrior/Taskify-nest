@@ -74,6 +74,7 @@ export class AuthController {
           firstName: 'Shiva',
           lastName: 'Bhusal',
           email: 'shiva@gmail.com',
+          dob: '2002-08-15T00:00:00.000Z',
           userName: 'shivabhusal',
           role: 'USER',
           isEmailVerified: false,
