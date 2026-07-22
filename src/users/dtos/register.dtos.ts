@@ -1,40 +1,70 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
-  IsEnum,
   IsNotEmpty,
   IsString,
+  Matches,
+  MaxLength,
   MinLength,
 } from 'class-validator';
-import { Roles } from './user.dto';
 
 export class RegisterDto {
   @ApiProperty({
-    example: 'shiva@gmail.com',
-    description: 'Unique email address for the account.',
+    example: 'Shiva',
+    description: 'User first name',
   })
-  @IsEmail()
-  email: string;
-
-  @ApiProperty({ example: 'shiva', description: 'Display name for the user.' })
   @IsString()
   @IsNotEmpty()
+  @MaxLength(50)
+  @MinLength(2)
+  firstName: string;
+
+  @ApiProperty({
+    example: 'Bhusal',
+    description: 'User last name',
+  })
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(50)
+  @MinLength(2)
+  lastName: string;
+
+  @ApiProperty({
+    example: 'shiva@gmail.com',
+    description: 'Unique email address',
+  })
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+
+  @ApiProperty({
+    example: 'shivabhusal',
+    description: 'Unique username',
+  })
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(3)
+  @MaxLength(30)
+  @Matches(/^[a-zA-Z0-9_.]+$/, {
+    message:
+      'Username can only contain letters, numbers, underscores, and periods.',
+  })
   userName: string;
 
   @ApiProperty({
-    example: 'password123',
-    description: 'Password must be at least 6 characters long.',
+    example: 'Password@123',
+    description:
+      'Password must be at least 8 characters and contain uppercase, lowercase, number, and special character.',
   })
   @IsString()
   @IsNotEmpty()
-  @MinLength(6)
+  @MinLength(8)
+  @Matches(
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.#])[A-Za-z\d@$!%*?&.#]+$/,
+    {
+      message:
+        'Password must contain uppercase, lowercase, number, and special character.',
+    },
+  )
   password: string;
-
-  @ApiProperty({
-    enum: Roles,
-    example: Roles.USER,
-    description: 'Role assigned to the user.',
-  })
-  @IsEnum(Roles)
-  role: Roles;
 }

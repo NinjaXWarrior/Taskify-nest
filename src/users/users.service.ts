@@ -12,7 +12,7 @@ export class UsersService {
     private readonly usersModel: Model<User>,
   ) {}
 
-  async addUser(user: RegisterDto) {
+  async addUser(user: Partial<User>) {
     const newUser = new this.usersModel(user);
     // console.log('UserService:', user);
     return await newUser.save();
@@ -20,6 +20,10 @@ export class UsersService {
 
   async findByEmail(email: string) {
     return await this.usersModel.findOne({ email, isDeleted: false });
+  }
+
+  async findByUserName(userName: string) {
+    return await this.usersModel.findOne({ userName, isDeleted: false });
   }
 
   async findById(id: string) {

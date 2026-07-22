@@ -27,36 +27,74 @@ import { RefreshTokenDto } from '../users/dtos/refresh-token.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  // @Public()
+  // @Post('register')
+  // @ApiOperation({ summary: 'Register user' })
+  // @ApiBody({ type: RegisterDto })
+  // @ApiCreatedResponse({
+  //   description: 'User created successfully',
+  //   schema: {
+  //     example: {
+  //       message: 'created User successfully',
+  //       user: {
+  //         _id: '684efb1f4db4d8f5e98b1234',
+  //         email: 'shiva@gmail.com',
+  //         userName: 'shiva',
+  //         role: 'USER',
+  //       },
+  //     },
+  //   },
+  // })
+  // @ApiForbiddenResponse({
+  //   description: 'User already exists',
+  //   schema: {
+  //     example: {
+  //       statusCode: 403,
+  //       message: 'User already exists',
+  //       error: 'Forbidden',
+  //     },
+  //   },
+  // })
+  // register(@Body() dto: RegisterDto) {
+  //   return this.authService.register(dto);
+  // }
+
   @Public()
   @Post('register')
-  @ApiOperation({ summary: 'Register user' })
+  @ApiOperation({ summary: 'Register a new user' })
   @ApiBody({ type: RegisterDto })
   @ApiCreatedResponse({
-    description: 'User created successfully',
+    description: 'User registered successfully',
     schema: {
       example: {
-        message: 'created User successfully',
-        user: {
+        success: true,
+        message: 'User registered successfully',
+        data: {
           _id: '684efb1f4db4d8f5e98b1234',
+          firstName: 'Shiva',
+          lastName: 'Bhusal',
           email: 'shiva@gmail.com',
-          userName: 'shiva',
+          userName: 'shivabhusal',
           role: 'USER',
+          isEmailVerified: false,
+          isActive: true,
+          createdAt: '2026-07-22T18:30:00.000Z',
         },
       },
     },
   })
   @ApiForbiddenResponse({
-    description: 'User already exists',
+    description: 'Email or username already exists',
     schema: {
       example: {
         statusCode: 403,
-        message: 'User already exists',
+        message: 'Email or username already exists',
         error: 'Forbidden',
       },
     },
   })
   register(@Body() dto: RegisterDto) {
-    return this.authService.createUser(dto);
+    return this.authService.register(dto);
   }
 
   @Public()

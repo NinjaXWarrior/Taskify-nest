@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  ConflictException,
+} from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
@@ -10,6 +15,7 @@ import { ResetPasswordDto } from '../users/dtos/reset-password.dto';
 import { ChangePasswordDto } from '../users/dtos/change-password.dto';
 import * as crypto from 'crypto';
 import { EmailService } from '../common/email/email.service';
+import { Roles } from '../users/dtos/user.dto';
 import { RefreshTokenDto } from '../users/dtos/refresh-token.dto';
 
 @Injectable()
@@ -20,23 +26,65 @@ export class AuthService {
     private emailService: EmailService,
   ) {}
 
-  async createUser(dto: RegisterDto) {
-    const existingUser = await this.usersService.findByEmail(dto.email);
+  // async register(dto: RegisterDto) {
+  //   const existingUser = await this.usersService.findByEmail(dto.email);
 
-    if (existingUser) {
-      throw new HttpException('User already exists', HttpStatus.FORBIDDEN);
+  //   if (existingUser) {
+  //     throw new HttpException('User already exists', HttpStatus.FORBIDDEN);
+  //   }
+
+  //   const user = await this.usersService.addUser(dto);
+
+  //   return {
+  //     message: 'created User successfully',
+  //     timestamp: new Date().toISOString(),
+  //     user: {
+  //       _id: user._id,
+  //       email: user.email,
+  //       userName: user.userName,
+  //       role: user.role,
+  //     },
+  //   };
+  // }
+
+  async register(dto: RegisterDto) {
+    const existingEmail = await this.usersService.findByEmail(dto.email);
+
+    if (existingEmail) {
+      throw new ConflictException('Email already exists');
     }
 
-    const user = await this.usersService.addUser(dto);
+    const existingUserName = await this.usersService.findByUserName(
+      dto.userName,
+    );
+
+    if (existingUserName) {
+      throw new ConflictException('Username already exists');
+    }
+
+    const hashedPassword = await bcrypt.hash(dto.password, 12);
+
+    const user = await this.usersService.addUser({
+      ...dto,
+      password: hashedPassword,
+      role: Roles.USER,
+      isActive: true,
+      isEmailVerified: false,
+    });
 
     return {
-      message: 'created User successfully',
-      timestamp: new Date().toISOString(),
-      user: {
+      success: true,
+      message: 'User registered successfully',
+      data: {
         _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
         email: user.email,
         userName: user.userName,
         role: user.role,
+        isEmailVerified: user.isEmailVerified,
+        isActive: user.isActive,
+        createdAt: user.createdAt,
       },
     };
   }

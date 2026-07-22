@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 export enum Roles {
   ADMIN = 'ADMIN',
@@ -11,48 +11,108 @@ export enum Roles {
 
 export class User {
   @ApiProperty({
-    example: 'shiva@gmail.com',
-    description: 'Email address for the account.',
+    example: 'Shiva',
+    description: 'User first name',
   })
   @IsString()
   @IsNotEmpty()
+  readonly firstName: string;
+
+  @ApiProperty({
+    example: 'Bhusal',
+    description: 'User last name',
+  })
+  @IsString()
+  @IsNotEmpty()
+  readonly lastName: string;
+
+  @ApiProperty({
+    example: 'shiva@gmail.com',
+    description: 'Unique email address',
+  })
+  @IsEmail()
   readonly email: string;
 
   @ApiProperty({
-    example: 'password123',
-    description: 'Hashed or plain password value.',
+    example: 'shivabhusal',
+    description: 'Unique username',
   })
   @IsString()
-  @IsNotEmpty()
-  readonly password: string;
+  readonly userName: string;
 
   @ApiProperty({
-    example: 'shiva',
-    description: 'Display name of the account owner.',
+    example: '$2b$12$xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+    description: 'Hashed password',
   })
   @IsString()
-  @IsNotEmpty()
-  readonly userName: string;
+  readonly password: string;
 
   @ApiProperty({
     enum: Roles,
     example: Roles.USER,
-    description: 'Role assigned to the user.',
+    description: 'User role',
   })
-  @IsNotEmpty()
   readonly role: Roles;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({
+    example: 'https://i.pravatar.cc/150?img=12',
+    description: 'Profile avatar',
+    required: false,
+  })
   readonly avatar?: string;
 
-  @ApiProperty({ required: false })
-  readonly isActive?: boolean;
+  @ApiProperty({
+    example: true,
+    description: 'Account active status',
+  })
+  readonly isActive: boolean;
+
+  @ApiProperty({
+    example: false,
+    description: 'Email verification status',
+  })
+  readonly isEmailVerified: boolean;
+
+  @ApiProperty({
+    example: [],
+    description: 'Stored refresh tokens',
+    required: false,
+  })
+  readonly refreshTokens?: string[];
+
+  @ApiProperty({
+    example: null,
+    required: false,
+  })
+  readonly passwordResetToken?: string;
+
+  @ApiProperty({
+    example: null,
+    required: false,
+  })
+  readonly passwordResetExpires?: Date;
+
+  @ApiProperty({
+    example: false,
+    description: 'Soft delete status',
+  })
+  readonly isDeleted: boolean;
+
+  @ApiProperty({
+    example: '2026-07-23T18:30:00.000Z',
+    description: 'Created date',
+  })
+  readonly createdAt: Date;
+
+  @ApiProperty({
+    example: '2026-07-23T18:30:00.000Z',
+    description: 'Last updated date',
+  })
+  readonly updatedAt: Date;
 
   @ApiProperty({
     example: '688b2b7da6f3f4dd7d2e2a9b',
-    description: 'Unique identifier for the user.',
+    description: 'MongoDB ObjectId',
   })
-  @IsString()
-  @IsNotEmpty()
   readonly id: string;
 }
