@@ -59,14 +59,6 @@ export class AuthController {
     return this.authService.createUser(dto);
   }
 
-  //   @Post('login')
-  //   @ApiOperation({ summary: 'Login user' })
-  //   @ApiBody({ type: LoginDto })
-  //   login(@Body() dto: LoginDto) {
-  //     return this.authService.login(dto);
-  //   }
-  // }
-
   @Public()
   @Post('login')
   @ApiOperation({ summary: 'Login user' })
