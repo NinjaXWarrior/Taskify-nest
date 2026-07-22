@@ -92,6 +92,7 @@ export class AuthService {
 
   // async login(dto: LoginDto): Promise<{ accessToken: string }> {
   async login(dto: LoginDto): Promise<{
+    success: boolean;
     message: string;
     accessToken: string;
     refreshToken: string;
@@ -116,15 +117,24 @@ export class AuthService {
       await this.usersService.setRefreshToken(result._id, refreshToken);
 
       return {
+        success: true,
         message: 'Login successful',
         accessToken,
         refreshToken,
         timestamp: new Date().toISOString(),
         user: {
           _id: result._id,
+          firstName: result.firstName,
+          lastName: result.lastName,
           email: result.email,
           userName: result.userName,
+          dob: result.dob,
           role: result.role,
+          avatar: result.avatar,
+          isEmailVerified: result.isEmailVerified,
+          isActive: result.isActive,
+          createdAt: result.createdAt,
+          updatedAt: result.updatedAt,
         },
       };
     }

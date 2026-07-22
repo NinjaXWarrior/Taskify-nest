@@ -1,16 +1,26 @@
 import { Document } from 'mongoose';
 
 export interface user extends Document {
-  readonly email: string;
-  password: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  dob: string;
   userName: string;
-  role: Roles;
-  id: string;
+  password: string;
+  role: string;
+  avatar?: string;
+  isActive: boolean;
+  isEmailVerified: boolean;
+  refreshTokens: string[];
+  isDeleted: boolean;
 }
 
 export enum Roles {
-  ADMIN,
-  USER,
+  ADMIN = 'ADMIN',
+  MANAGER = 'MANAGER',
+  TEAM_LEAD = 'TEAM_LEAD',
+  EMPLOYEE = 'EMPLOYEE',
+  USER = 'USER',
 }
 
 //controllers\\dto//repository/service/appModule

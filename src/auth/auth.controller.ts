@@ -27,38 +27,6 @@ import { RefreshTokenDto } from '../users/dtos/refresh-token.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  // @Public()
-  // @Post('register')
-  // @ApiOperation({ summary: 'Register user' })
-  // @ApiBody({ type: RegisterDto })
-  // @ApiCreatedResponse({
-  //   description: 'User created successfully',
-  //   schema: {
-  //     example: {
-  //       message: 'created User successfully',
-  //       user: {
-  //         _id: '684efb1f4db4d8f5e98b1234',
-  //         email: 'shiva@gmail.com',
-  //         userName: 'shiva',
-  //         role: 'USER',
-  //       },
-  //     },
-  //   },
-  // })
-  // @ApiForbiddenResponse({
-  //   description: 'User already exists',
-  //   schema: {
-  //     example: {
-  //       statusCode: 403,
-  //       message: 'User already exists',
-  //       error: 'Forbidden',
-  //     },
-  //   },
-  // })
-  // register(@Body() dto: RegisterDto) {
-  //   return this.authService.register(dto);
-  // }
-
   @Public()
   @Post('register')
   @ApiOperation({ summary: 'Register a new user' })
@@ -103,25 +71,37 @@ export class AuthController {
   @ApiOperation({ summary: 'Login user' })
   @ApiBody({ type: LoginDto })
   @ApiCreatedResponse({
-    description: 'Login successful',
+    description: 'User logged in successfully',
     schema: {
       example: {
+        success: true,
+        message: 'Login successful',
         accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        refreshToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        timestamp: '2026-07-23T18:30:00.000Z',
         user: {
           _id: '684efb1f4db4d8f5e98b1234',
+          firstName: 'Shiva',
+          lastName: 'Bhusal',
           email: 'shiva@gmail.com',
-          userName: 'shiva',
+          userName: 'shivabhusal',
+          dob: '2002-08-15T00:00:00.000Z',
           role: 'USER',
+          avatar: 'https://i.pravatar.cc/150?img=12',
+          isEmailVerified: false,
+          isActive: true,
+          createdAt: '2026-07-23T18:30:00.000Z',
+          updatedAt: '2026-07-23T18:35:00.000Z',
         },
       },
     },
   })
   @ApiUnauthorizedResponse({
-    description: 'Invalid credentials',
+    description: 'Invalid email or password',
     schema: {
       example: {
         statusCode: 401,
-        message: 'Invalid credentials',
+        message: 'Invalid email or password',
         error: 'Unauthorized',
       },
     },
